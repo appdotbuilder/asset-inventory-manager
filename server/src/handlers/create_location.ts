@@ -1,13 +1,24 @@
+import { db } from '../db';
+import { locationsTable } from '../db/schema';
 import { type CreateLocationInput, type Location } from '../schema';
 
 export const createLocation = async (input: CreateLocationInput): Promise<Location> => {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is to create a new location in the database.
-  // This will be used for managing the location dropdown options.
-  return {
-    id: 0,
-    name: input.name,
-    description: input.description || null,
-    created_at: new Date()
-  };
+  try {
+    // Insert location record
+    const result = await db.insert(locationsTable)
+      .values({
+        name: input.name,
+        description: input.description || null
+      })
+      .returning()
+      .execute();
+
+    const location = result[0];
+    return {
+      ...location
+    };
+  } catch (error) {
+    console.error('Location creation failed:', error);
+    throw error;
+  }
 };

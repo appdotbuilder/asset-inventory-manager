@@ -1,8 +1,19 @@
+import { db } from '../db';
+import { locationsTable } from '../db/schema';
 import { type Location } from '../schema';
+import { asc } from 'drizzle-orm';
 
 export const getLocations = async (): Promise<Location[]> => {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is to fetch all available locations for the dropdown.
-  // This will be used in the asset form for location selection.
-  return [];
+  try {
+    // Fetch all locations ordered by name for dropdown display
+    const results = await db.select()
+      .from(locationsTable)
+      .orderBy(asc(locationsTable.name))
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch locations:', error);
+    throw error;
+  }
 };
